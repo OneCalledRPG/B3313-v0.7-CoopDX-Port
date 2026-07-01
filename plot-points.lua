@@ -24,7 +24,15 @@ ysDialogNumber = 0
 yellowSwitchDialog = true
 yellowSwitchCapState = 0
 capBuffer = false
+betterCoinCompat = false
 
+hook_event(HOOK_ON_MODS_LOADED, function()
+    for i = 0, #gActiveMods, 1 do
+	    if gActiveMods[i].name:find("Better Coins") then
+		    betterCoinCompat = true
+	    end
+    end
+end)
 
 -- Hide Peach's dialogue text during the credits
 function hide_peach_dialog()
@@ -264,7 +272,7 @@ function on_interact(m, o, intType, interacted)
         elseif (gNetworkPlayers[0].currLevelNum == LEVEL_BOB and gNetworkPlayers[0].currAreaIndex == 4) then
             o.oBehParams2ndByte = DIALOG_BC_3
         else
-            o.oBehParams2ndByte = BDIALOG_BC_2
+            o.oBehParams2ndByte = DIALOG_BC_2
         end
     end
 
@@ -524,45 +532,17 @@ hook_event(HOOK_ON_WARP, function()
         end
     end
 
-    -- death warps
-    -- Delete them if they're already there
-    local DeathWarpFlag = obj_get_first_with_behavior_id(bhvKillWarpFlag)
-    while DeathWarpFlag ~= nil do
-        if obj_has_behavior_id(DeathWarpFlag, bhvKillWarpFlag) ~= 0 then
-            obj_mark_for_deletion(DeathWarpFlag)
-        end
-        DeathWarpFlag = obj_get_next_with_same_behavior_id(DeathWarpFlag)
-    end
-
-    if gNetworkPlayers[0].currLevelNum == LEVEL_TTC and gNetworkPlayers[0].currAreaIndex == 3 then -- Plexal Lobby
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, -16987, -247, -3044, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, -27859, 228, 4927, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 265, -1472, -3175, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 265, -1473, -640, nil)
-    end
-    if gNetworkPlayers[0].currLevelNum == LEVEL_SL and gNetworkPlayers[0].currAreaIndex == 1 then -- Floating Hotel
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 16565, 677, -6827, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 17342, 677, -6827, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 18122, 677, -6827, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 18850, 677, -6827, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 19590, 677, -6827, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 20312, 677, -6827, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 20998, 677, -6827, nil)
-
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 16565, 677, -5907, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 17342, 677, -5907, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 18122, 677, -5907, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 18850, 677, -5807, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 19590, 677, -5907, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 20312, 677, -5907, nil)
-        spawn_non_sync_object(bhvKillWarpFlag, E_MODEL_NONE, 20998, 677, -5907, nil)
-    end
-
     --Fix Crescent Castle Death Floor
     if gNetworkPlayers[0].currLevelNum == LEVEL_BOB and gNetworkPlayers[0].currAreaIndex == 6 then
         spawn_non_sync_object(id_bhvPushableMetalBox, E_MODEL_METAL_BOX, -2331, 205, 2050, nil)
         spawn_non_sync_object(id_bhvPushableMetalBox, E_MODEL_METAL_BOX, -2024, 205, 2050, nil)
     end
+
+    -- Better Coin Compatibility for Peach's Cell
+    --[[if gNetworkPlayers[0].currLevelNum == LEVEL_THI and gNetworkPlayers[0].currAreaIndex == 7 and betterCoinCompat then
+        --local starPOS = obj_get_first_with_behavior_id(id_bhvStar)
+        spawn_non_sync_object(bhvFakeWarp, E_MODEL_NONE, 2309,300,-22683, function(o) dest_level = LEVEL_SA dest_area = 6 end)
+    end]]
 end)
 
 hook_event(HOOK_ON_LEVEL_INIT, function()

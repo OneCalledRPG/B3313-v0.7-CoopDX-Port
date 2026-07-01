@@ -1,6 +1,3 @@
--- name: B3313 Area Display
--- description: \\#ff00ff\\B\\#ff0000\\3\\#5555ff\\3\\#ffff00\\1\\#00ff00\\3\\#ff7700\\ Area Display\n\n\\#ffffff\\This mod displays the proper names of each area every player is in. It's easier to keep track of stars and their locations that way. Names are accurate to their latest version (either 0.7 or 0.9).\n\nMod by \\#2b0013\\Floralys\\#ffffff\\.
-
 areas = {
     [LEVEL_CASTLE_GROUNDS] = {
         [1] = {name = "Castle Grounds", course = "OW (Grounds)", color = "blue"},
@@ -505,6 +502,7 @@ end
 
 local function blist_command(msg)
     extendedAreaList = not extendedAreaList
+    play_sound(SOUND_MENU_STAR_SOUND, gMarioStates[0].pos)
     return true
 end
 

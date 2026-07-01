@@ -132,21 +132,6 @@ function play_waahwaahwaah_loop(o)
 end
 id_bhvWaahWaah = hook_behavior(nil, OBJ_LIST_GENACTOR, false, play_waahwaahwaah_init, play_waahwaahwaah_loop, "waahwaah")
 
--- Kills the player at the warps that take lives away in the hack. Allows for negative lives
-function killwarpflag_init(o)
-    o.hitboxRadius = 70
-    o.hitboxHeight = 20
-end
-function killwarpflag_loop(o)
-    local buffer = 0
-    local m = gMarioStates[0]
-    if obj_check_hitbox_overlap(o, gMarioStates[0].marioObj) == true and gMarioStates[0].playerIndex == 0 then
-        obj_mark_for_deletion(o)
-        if displayLives <= 0 then allow_negative_lives = true end
-        m.numLives = m.numLives - 1
-    end
-end
-bhvKillWarpFlag = hook_behavior(nil, OBJ_LIST_LEVEL, true, killwarpflag_init, killwarpflag_loop, "Kill Mario on Warp")
 
 function fakewarp_init(o)
     o.hitboxRadius = 100

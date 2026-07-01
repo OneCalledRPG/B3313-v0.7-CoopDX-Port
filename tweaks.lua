@@ -33,18 +33,13 @@ joinedLives = false
 warp_delay = 0
 transition = 0
 castle_grounds_warp_sound = false
-displayLives = 0
 currLives = 0
-allow_negative_lives = false
-
---[[hook_event(HOOK_ON_MODS_LOADED, funtion()
-    displayLives = 2
-    hud_set_value(HUD_DISPLAY_LIVES, displayLives)
-end)]]
+displayLives = 0
+is_dying = false
 
 local function life_update(m)
     if m.playerIndex ~= 0 then return end
-    
+
     -- Start with 2 lives
     if not joinedLives then
         displayLives = 2
@@ -63,13 +58,7 @@ local function life_update(m)
 
     -- Handle deaths
 	if m.numLives < 4 then
-        -- Do not kill player in Peach's Cell quicksand or falling from Balcony to Uncanny Courtyard
-		if (gNetworkPlayers[m.playerIndex].currLevelNum == LEVEL_THI and ((gNetworkPlayers[m.playerIndex].currAreaIndex == 6) or (gNetworkPlayers[m.playerIndex].currAreaIndex == 7)))
-		or (gNetworkPlayers[m.playerIndex].currLevelNum == LEVEL_RR and (gNetworkPlayers[m.playerIndex].currAreaIndex == 5)) then
-			currLives = currLives
-		else
-			currLives = currLives - 1
-		end
+		currLives = currLives - 1
 		m.numLives = m.numLives + 1
 		displayLives = currLives
 	end
@@ -81,34 +70,36 @@ local function life_update(m)
 
 	-- life loop-back (negative limit)
 	if displayLives < -128 then
-		displayLives = 100
+        currLives = 100
+		displayLives = currLives
 	end
 	-- life cut-off point (positive limit)
 	if displayLives > 100 then
-		displayLives = 100
+        currLives = 100
+		displayLives = currLives
 	end
-
-    if displayLives >= 0 then allow_negative_lives = false end
-
-    --hud_set_value(HUD_DISPLAY_LIVES, displayLives)
 end
 
-local function on_death(m)
+hook_event(HOOK_ON_DEATH, function(m)
     local m = gMarioStates[0]
-    if displayLives == -1 and not allow_negative_lives then
-            currLives = 2
-            displayLives = 2
-            m.health = 0x880
-            displayCoin = 0
-            coincount = 0
-            warp_to_warpnode(LEVEL_THI, 1, 0, 10)
-            --play_sound(SOUND_MENU_MARIO_CASTLE_WARP, m.pos)
-            castle_grounds_warp_sound = true
-            set_mario_action(m, ACT_SPAWN_SPIN_AIRBORNE, 0)
-        --end
+    is_dying = true
+end)
+
+hook_event(HOOK_ON_WARP, function(m)
+    local m = gMarioStates[0]
+    if displayLives == 0 and is_dying then --and not allow_negative_lives then
+        currLives = 2
+        displayLives = 2
+        m.health = 0x880
+        displayCoin = 0
+        coincount = 0
+        warp_to_warpnode(LEVEL_THI, 1, 0, 10)
+        --play_sound(SOUND_MENU_MARIO_CASTLE_WARP, m.pos)
+        castle_grounds_warp_sound = true
+        set_mario_action(m, ACT_SPAWN_SPIN_AIRBORNE, 0)
     end
-end
-hook_event(HOOK_ON_WARP, on_death)
+    is_dying = false
+end)
 
 --[[local function coin_interact(m, o,interactType)
     if (m.playerIndex ~= 0) then

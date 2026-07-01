@@ -1,7 +1,4 @@
--- name: [RYP] Rideable Yoshis for B3313 0.7
--- description: File that spawns Yoshi Eggs in B3313 levels. Have fun
-
-NestPlacementsB331307 = { -- Nest co-ords and area.
+NestPlacementsB331307 = { -- Nest coords and area.
     [-1] = {
         nests = { },
     },

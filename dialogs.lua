@@ -1,7 +1,3 @@
---dialog handler
---Changes the dialogue to b3313 0.7's dialogue
---dialog IDs marked in the list are skipped, and set to render at a height of 400 as skipped dialogue still renders for about half a second before fully skipping
-
 local skipdialogs = {
   [DIALOG_067] = true,
   [DIALOG_092] = true,
@@ -110,7 +106,7 @@ c o l l e c t e d \
 s a v e ?\
 //y e s////N o"))
 
-smlua_text_utils_dialog_replace(DIALOG_014,1,4,30,200, ("p o w e r  s t a r !\
+smlua_text_utils_dialog_replace(DIALOG_014,1,2,30,200, ("p o w e r  s t a r !\
 \
 s a v e ?\
 \

@@ -1,7 +1,3 @@
--- name: Old Mario
--- incompatible:
--- description: b3313 version
-
 gStateExtras = {}
 for i = 0,(MAX_PLAYERS - 1) do
     gStateExtras[i] = {}
@@ -38,9 +34,6 @@ local b3313_models = {
     [CT_WALUIGI] = {E_MODEL_WALUIGI, E_MODEL_WALUIGI, E_MODEL_BEEIE_CHUNGUS},
     [CT_WARIO] = {E_MODEL_WARIO, E_MODEL_WARIO, E_MODEL_BEEIE_CHUNGUS}
 }
-local mVanilla = 1
-local mBeta = 2
-local mChungus = 3
 
 B3313_CHAR_PALETTES = {
 	["mario"] = {
@@ -89,7 +82,7 @@ B3313_CHAR_PALETTES = {
     		[EMBLEM] = { r = 0x80, g = 0x00, b = 0x00 },
 		},
 		{
-			name = "Y.A.A.S.!",
+			name = "All Time Bro",
 			[PANTS]  = { r = 0x00, g = 0x2c, b = 0xff },
     		[SHIRT]  = { r = 0xfd, g = 0x00, b = 0xfd },
     		[GLOVES] = { r = 0xff, g = 0xff, b = 0xff },
@@ -231,37 +224,47 @@ if _G.charSelectExists then
 	end
 end
 
-function model_handling(m)
+--[[function model_handling(m)
 	if chungus then
-		custom_model_stats = E_MODEL_BEEIE_CHUNGUS b_model = mChungus
+		custom_model_stats = E_MODEL_BEEIE_CHUNGUS b_model = 3
 	else
 		if not gPlayerSyncTable[0].vanillaMario then
-			custom_model_stats = b3313_models[gMarioStates[0].character.type][mBeta] b_model = mBeta
+			custom_model_stats = b3313_models[gMarioStates[0].character.type][2] b_model = 2
 		else
-			if _G.charSelectExists then custom_model_stats = b3313_models[gMarioStates[0].character.type][mVanilla] b_model = mVanilla
+			if _G.charSelectExists then custom_model_stats = b3313_models[gMarioStates[0].character.type][1] b_model = 1
 			else custom_model_stats = nil end
 		end
 	end
 	gPlayerSyncTable[m.playerIndex].modelId = custom_model_stats
+end]]
+
+function model_handling(m)
+	if b3313_models[gMarioStates[0].character.type] ~= nil then
+		if chungus then
+			custom_model_stats = E_MODEL_BEEIE_CHUNGUS b_model = 3
+		else
+			if not gPlayerSyncTable[0].vanillaMario then
+				custom_model_stats = b3313_models[gMarioStates[0].character.type][2] b_model = 2
+			else
+				if _G.charSelectExists then custom_model_stats = b3313_models[gMarioStates[0].character.type][1] b_model = 1
+				else custom_model_stats = nil end
+			end
+		end
+		gPlayerSyncTable[m.playerIndex].modelId = custom_model_stats
+	else
+		gPlayerSyncTable[m.playerIndex].modelId = gMarioStates[0].character.modelId
+	end
 end
 
 function set_model(o, model)
 	if obj_has_behavior_id(o, id_bhvMario) ~= 0 then
         local i = network_local_index_from_global(o.globalPlayerIndex)
 		if _G.charSelectExists then
-			if charSelect.version_get_full().major >= 16 then
-				_G.charSelect.character_edit_costume(0, 1, nil, nil, nil, nil, b3313_models[CT_MARIO][b_model])
-				_G.charSelect.character_edit_costume(1, 1, nil, nil, nil, nil, b3313_models[CT_LUIGI][b_model])
-				_G.charSelect.character_edit_costume(2, 1, nil, nil, nil, nil, b3313_models[CT_TOAD][b_model])
-				_G.charSelect.character_edit_costume(3, 1, nil, nil, nil, nil, b3313_models[CT_WALUIGI][b_model])
-				_G.charSelect.character_edit_costume(4, 1, nil, nil, nil, nil, b3313_models[CT_WARIO][b_model])
-			else
-				_G.charSelect.character_edit_costume(1, 1, nil, nil, nil, nil, b3313_models[CT_MARIO][b_model])
-				_G.charSelect.character_edit_costume(1, 2, nil, nil, nil, nil, b3313_models[CT_LUIGI][b_model])
-				_G.charSelect.character_edit_costume(1, 3, nil, nil, nil, nil, b3313_models[CT_TOAD][b_model])
-				_G.charSelect.character_edit_costume(1, 4, nil, nil, nil, nil, b3313_models[CT_WALUIGI][b_model])
-				_G.charSelect.character_edit_costume(1, 5, nil, nil, nil, nil, b3313_models[CT_WARIO][b_model])
-			end
+			_G.charSelect.character_edit_costume(0, 1, nil, nil, nil, nil, b3313_models[CT_MARIO][b_model])
+			_G.charSelect.character_edit_costume(1, 1, nil, nil, nil, nil, b3313_models[CT_LUIGI][b_model])
+			_G.charSelect.character_edit_costume(2, 1, nil, nil, nil, nil, b3313_models[CT_TOAD][b_model])
+			_G.charSelect.character_edit_costume(3, 1, nil, nil, nil, nil, b3313_models[CT_WALUIGI][b_model])
+			_G.charSelect.character_edit_costume(4, 1, nil, nil, nil, nil, b3313_models[CT_WARIO][b_model])
 		else
         	if gPlayerSyncTable[i].modelId ~= nil and obj_has_model_extended(o, gPlayerSyncTable[i].modelId) == 0 then
             	obj_set_model_extended(o, gPlayerSyncTable[i].modelId)
@@ -318,10 +321,16 @@ end
 --B3313_Moveset = true
 enableBeeie09 = false
 bluigiSlideFix = false
+extraCharsOn = false
+charMovesetsOn = false
 
 for i = 0, #gActiveMods, 1 do
 	if gActiveMods[i].name:find("Character Movesets") or gActiveMods[i].name:find("CMS") then
+		charMovesetsOn = true
 		bluigiSlideFix = true
+	end
+	if gActiveMods[i].name:find("Extra Characters Plus") then
+		extraCharsOn = true
 	end
 end
 
@@ -557,12 +566,21 @@ local function beta_mario_before_phys_step(m)
     -- friction
 	if gPlayerSyncTable[0].B3313_Moveset then
     	if not slipperyFloors then
-			if (m.character.type == CT_LUIGI and bluigiSlideFix) then --Fix Luigi's sliding in Character Movesets accurately
+
+			if _G.charSelectExists and extraCharsOn then
+				if (m.character.type == CT_LUIGI and charSelect.character_is_vanilla()) and gCSPlayers[0].movesetToggle then
+					bluigiSlideFix = true
+				else
+					bluigiSlideFix = false
+				end
+			end
+
+			if (m.character.type == CT_LUIGI and bluigiSlideFix) then
 				if (m.action == ACT_BRAKING or m.action == ACT_TURNING_AROUND) then
-					m.forwardVel = m.forwardVel + (hScale * 1.5)
+					m.forwardVel = m.forwardVel + (hScale * 1)
 				end
 				if (m.action == ACT_MOVE_PUNCHING) then
-					m.forwardVel = m.forwardVel + (hScale * 0.333)
+					m.forwardVel = m.forwardVel + (hScale * 0.1)
 				end
 			else
 				if (m.action == ACT_BRAKING or m.action == ACT_TURNING_AROUND) then
@@ -585,10 +603,16 @@ end
 
 function mario_on_set_action(m)
 	if (m.playerIndex ~= 0) then return end
-	--This first one is literally needed so you don't get softlocked in pipes
+	-- Prevent pipe softlocks
 	if m.action == ACT_EMERGE_FROM_PIPE then
 		m.vel.y = m.vel.y + 10
 	end
+	-- Change exit-save logic
+	--[[if m.action == ACT_EXIT_LAND_SAVE_DIALOG then
+		m.faceAngle.y = m.faceAngle.y - 32767
+		create_dialog_box_with_response(14)
+		set_mario_action(m, ACT_JUMP_LAND, 1)
+	end]]
 	if gPlayerSyncTable[0].B3313_Moveset then
 		if m.action == ACT_JUMP or m.action == ACT_DOUBLE_JUMP or m.action == ACT_BACKFLIP or m.action == ACT_SIDE_FLIP or m.action == ACT_DIVE or m.action == ACT_JUMP_KICK or m.action == ACT_BACKWARD_ROLLOUT or m.action == ACT_FORWARD_ROLLOUT or m.action == ACT_WATER_JUMP then
 			m.vel.y = m.vel.y + 5
@@ -752,7 +776,7 @@ hook_event(HOOK_MARIO_UPDATE, mario_update)
 
 function beeieMarioAesthetics_command(msg)
     gPlayerSyncTable[0].vanillaMario = not gPlayerSyncTable[0].vanillaMario
-	--play_character_sound(gMarioStates[0], CHAR_SOUND_HOOHOO)
+	play_character_sound(gMarioStates[0], CHAR_SOUND_HOOHOO)
 	play_sound(SOUND_MENU_STAR_SOUND, gMarioStates[0].pos)
     return true
 end
@@ -771,6 +795,7 @@ end
 
 function beeieChungus_command(msg)
     chungus = not chungus
+	play_sound(SOUND_MENU_STAR_SOUND, gMarioStates[0].pos)
     return true
 end
 
@@ -784,4 +809,4 @@ hook_mod_menu_checkbox("B3313 Moveset", gPlayerSyncTable[0].B3313_Moveset, beeie
 hook_mod_menu_checkbox("Additional Moves (0.9+)", enableBeeie09, beeieQOL_command)
 hook_mod_menu_checkbox("Vanilla Mario", gPlayerSyncTable[0].vanillaMario, beeieMarioAesthetics_command)
 hook_mod_menu_checkbox("Chungus Mode", chungus, beeieChungus_command)
-hook_mod_menu_checkbox("Luigi Slide Fix (Character Moveset Support)", bluigiSlideFix, bLuigiSlidePatch_command)
+if charMovesetsOn then hook_mod_menu_checkbox("Luigi Slide Fix (Character Moveset Support)", bluigiSlideFix, bLuigiSlidePatch_command) end

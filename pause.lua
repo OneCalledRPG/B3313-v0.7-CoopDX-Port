@@ -1,6 +1,3 @@
--- name: !  Custom Pause Menu  !
--- description: New pause menu featuring a \nrestart level option\nMade by Blocky
-
 local zero = {x=0,y=0,z=0}
 local m = gMarioStates[0]
 local np = gNetworkPlayers[0]
@@ -359,7 +356,7 @@ local function hud_render()
         end
 
         -- Render Pause Screen Text
-        if currActNum == 99 or (menuActBlacklist[m.action] or m.action == ACT_JUMBO_STAR_CUTSCENE) then cstext = "Character Select is Unavailable"
+        --[[if currActNum == 99 or (menuActBlacklist[m.action] or m.action == ACT_JUMBO_STAR_CUTSCENE) then cstext = "Character Select is Unavailable"
         else cstext = "Z Button - Character Select" end
         cswidth = djui_hud_get_screen_width() - djui_hud_measure_text(cstext)/2
         djui_hud_print_text(cstext, cswidth - 5, 3, 0.5)
@@ -379,7 +376,7 @@ local function hud_render()
         if charSelect.are_palettes_restricted() or charSelect.are_movesets_restricted() then
             cswidth = djui_hud_get_screen_width() - djui_hud_measure_text(cstext)/2
             djui_hud_print_text(cstext, cswidth - 5, 17, 0.5)
-        end
+        end]]
     end
 
     djui_hud_set_color(0, 0, 0, 192)
@@ -490,5 +487,6 @@ hook_event(HOOK_UPDATE, function()
             m.freeze = 1
             m.invincTimer = 2
         end
+        --c.cutscene = 0
     end
 end)

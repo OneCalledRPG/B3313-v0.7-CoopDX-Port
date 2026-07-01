@@ -1,6 +1,3 @@
--- name: B3313 Star Display
--- description: \\#ff00ff\\B\\#ff0000\\3\\#5555ff\\3\\#ffff00\\1\\#00ff00\\3\\#ff7700\\ Star Display\n\n\\#ffffff\\Tired of having to guess who got which stars? I gotcha.\n\nMod by \\#2b0013\\Floralys\\#ffffff\\.
-
 local star_display_areas = {
 -- CASTLE, CASTLE_COURTYARD
     {name = "Vanilla Upstairs", course = 0, stars = {1,2}},

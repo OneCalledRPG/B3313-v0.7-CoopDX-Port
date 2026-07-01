@@ -1,6 +1,6 @@
 -- General functions.
 function current_beta_voice(m)
-    if (not gPlayerSyncTable[m.playerIndex].vanillaMario) then
+    if get_character(m).type < 5 and(not gPlayerSyncTable[m.playerIndex].vanillaMario) then
         return 1 
     else
         return 0
@@ -534,38 +534,38 @@ hook_event(HOOK_MARIO_UPDATE, function(m) -- ALL Mario_Update hooked commands.,
     if m.playerIndex ~= 0 then return end
     -- Footstep sounds
     if (m.terrainSoundAddend == 196608 or m.terrainSoundAddend == 131072) and (m.flags ~= m.flags | MARIO_METAL_CAP) then
-        if m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_WALKING 
+        --[[if m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_WALKING 
         or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_RUNNING 
         or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_RUNNING_UNUSED
         or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_RUN_WITH_LIGHT_OBJ
-        or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_WALK_WITH_LIGHT_OBJ then
+        or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_WALK_WITH_LIGHT_OBJ then]]
             if step_sound then
-                if is_anim_past_frame(m, 26) ~= 0 or is_anim_past_frame(m, 60) ~= 0 then
+                --if is_anim_past_frame(m, 26) ~= 0 or is_anim_past_frame(m, 60) ~= 0 then
                     if m.terrainSoundAddend == 196608 then
                         network_play(sStepDefault, m.pos, 1.5, m.playerIndex)
                     elseif m.terrainSoundAddend == 131072 then
                         network_play(sStepWater, m.pos, 1.5, m.playerIndex)
                     end
                     step_sound = false
-                end
+                --end
             end
-        end
-        if m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_TIPTOE 
+        --end
+        --[[if m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_TIPTOE 
         or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_WALK_WITH_HEAVY_OBJ
         or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_RUN_WITH_HEAVY_OBJ  
         or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_SLOW_WALK_WITH_HEAVY_OBJ
-        or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_SLOW_WALK_WITH_LIGHT_OBJ then
+        or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_SLOW_WALK_WITH_LIGHT_OBJ then]]
             if step_sound then
-                if is_anim_past_frame(m, 26) ~= 0 or is_anim_past_frame(m, 80) ~= 0 then
+                --if is_anim_past_frame(m, 26) ~= 0 or is_anim_past_frame(m, 80) ~= 0 then
                     if m.terrainSoundAddend == 196608 then
                         network_play(sStepDefault, m.pos, 1.5, m.playerIndex)
                     elseif m.terrainSoundAddend == 131072 then
                         network_play(sStepWater, m.pos, 1.5, m.playerIndex)
                     end
-                end
+                --end
                 step_sound = false
             end
-        end
+        --end
 
         --Jump handling
         if m.pos.y > m.floorHeight then

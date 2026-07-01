@@ -1,8 +1,5 @@
---name: Custom HUD Template - B3313 B-Roll HUD
---description: A customizable template that changes the in game HUDs. Modified for use in B3313 (0.7)
-
 custom_hud = true
-currHUD = 1
+hud_07_layout = false
 
 local life_icons = {
     [CT_MARIO] = gTextures.mario_head,
@@ -13,64 +10,56 @@ local life_icons = {
 }
 
 local powerMeters = {
-    ["left"] = {
-        [1] = get_texture_info("b_roll_pm_left")
-    },
-    ["right"] = {
-        [1] = get_texture_info("b_roll_pm_right")
-    },
-    [1] = {
-        [1] = get_texture_info("b_roll_pm_1")
-    },
-    [2] = {
-        [1] = get_texture_info("b_roll_pm_2")
-    },
-    [3] = {
-        [1] = get_texture_info("b_roll_pm_3")
-    },
-    [4] = {
-        [1] = get_texture_info("b_roll_pm_4")
-    },
-    [5] = {
-        [1] = get_texture_info("b_roll_pm_5")
-    },
-    [6] = {
-        [1] = get_texture_info("b_roll_pm_6")
-    },
-    [7] = {
-        [1] = get_texture_info("b_roll_pm_7")
-    },
-    [8] = {
-        [1] = get_texture_info("b_roll_pm_8")
-    }
+    ["left"] = get_texture_info("b_roll_pm_left"),
+    ["right"] = get_texture_info("b_roll_pm_right"),
+    [1] = get_texture_info("b_roll_pm_1"),
+    [2] = get_texture_info("b_roll_pm_2"),
+    [3] = get_texture_info("b_roll_pm_3"),
+    [4] = get_texture_info("b_roll_pm_4"),
+    [5] = get_texture_info("b_roll_pm_5"),
+    [6] = get_texture_info("b_roll_pm_6"),
+    [7] = get_texture_info("b_roll_pm_7"),
+    [8] = get_texture_info("b_roll_pm_8")
 }
 
--- OLD FUNCTIONS FOR OLDER VERSIONS OF CS
---[[function render_custom_char_icon(x, y, scaleW, scaleH) -- Determines the character icon (compatibility with Character Select)
-    if _G.charSelectExists then
-        local lifeIcon = _G.charSelect.character_get_current_table().lifeIcon
-        if lifeIcon == nil then
-            djui_hud_print_text("?", x, y, 1)
-        else
-            djui_hud_render_texture(lifeIcon, x, y, scaleW * 16/lifeIcon.width, scaleH * 16/lifeIcon.height) -- 0.0625 is 1/16
-        end
-    else
-        djui_hud_render_texture(life_icons[gMarioStates[0].character.type], x, y, scaleW, scaleH)
-    end
-end]]
+local ax = 16 -- Space between the lives/stars/coins icons and the multiplication symbol
+local xb = 28 -- Space between the lives/stars/coins and the actual value of lives/stars/coins you have
 
---[[function render_custom_star_icon(x, y, scaleW, scaleH) -- Determines the character icon (compatibility with Character Select)
+-- Note, if a value in these rendring functions only takes one scale value, it'll default to the scaleW value, or the horizontal scale value
+
+function render_lives_segment(x, y, scaleW, scaleH) -- Lives
+    --render_custom_char_icon(x, y, scaleW, scaleH)  -- Gets the star icon from the earlier functions, in the event of a Character Select override
     if _G.charSelectExists then
-        local starIcon = _G.charSelect.character_get_current_table().starIcon
-        if starIcon == nil then
-            djui_hud_render_texture(gTextures.star, x, y, scaleW, scaleH)
-        else
-            djui_hud_render_texture(starIcon, x, y, scaleW * 16/starIcon.width, scaleH * 16/starIcon.height) -- 0.0625 is 1/16
-        end
+        _G.charSelect.character_render_life_icon(0, x, y, scaleW)
+    else
+        djui_hud_render_texture(gMarioStates[0].character.hudHeadTexture, x, y, scaleW, scaleH)
+    end
+    djui_hud_print_text("@", x + ax, y, scaleW)
+    djui_hud_print_text(lives, x + xb, y, scaleW)
+end
+
+function render_coins_segment(x, y, scaleW, scaleH) -- Coins
+    --if gNetworkPlayers[0].currLevelNum ~= LEVEL_CASTLE_GROUNDS and gNetworkPlayers[0].currLevelNum ~= LEVEL_CASTLE_COURTYARD and gNetworkPlayers[0].currLevelNum ~= LEVEL_CASTLE then     -- Hides coin display in certain areas
+        djui_hud_render_texture(gTextures.coin, x, y, scaleW, scaleH) -- Coin texture
+        djui_hud_print_text("@", x + ax, y, scaleW) -- The X
+        djui_hud_print_text(coins, x + xb, y, scaleW)
+    --end
+end
+
+function render_stars_segment(x, y, scaleW, scaleH) -- Stars
+    --render_custom_star_icon(x, y, scaleW, scaleH) -- Gets the star icon from the earlier functions, in the event of a Character Select override
+    if _G.charSelectExists then
+        _G.charSelect.character_render_star_icon(0, x, y, scaleW)
     else
         djui_hud_render_texture(gTextures.star, x, y, scaleW, scaleH)
     end
-end]]
+    if gMarioStates[0].numStars < 100 or not hud_07_layout then  -- Renders the X if you have less than 100 stars
+        djui_hud_print_text("@", x + ax, y, scaleW) -- The X
+        djui_hud_print_text(stars, x + xb, y, scaleW)  -- The counter itself
+    else
+        djui_hud_print_text(stars, x + ax, y, scaleW)
+    end
+end
 
 local pmTimer = 0
 local ascendValue = 0
@@ -107,10 +96,10 @@ function render_power_meter(x, y, scaleW, scaleH)
     hud_render_power_meter(gMarioStates[0].health, x, y + ascendValue, scaleW, scaleH)]]
 
     --if not gPlayerSyncTable[0].vanillaMario then
-        djui_hud_render_texture(powerMeters["left"][currHUD], x, y + ascendValue, scaleW, scaleH)
-        djui_hud_render_texture(powerMeters["right"][currHUD], x + 32, y + ascendValue, scaleW, scaleH)
+        djui_hud_render_texture(powerMeters["left"], x, y + ascendValue, scaleW, scaleH)
+        djui_hud_render_texture(powerMeters["right"], x + 32, y + ascendValue, scaleW, scaleH)
         if health > 0 then
-            djui_hud_render_texture(powerMeters[health][currHUD], (x + 16), (y + 16) + ascendValue, scaleW, scaleH)
+            djui_hud_render_texture(powerMeters[health], (x + 16), (y + 16) + ascendValue, scaleW, scaleH)
         end
     --else
     --    djui_hud_set_color(255, 255, 255, 255)
@@ -175,7 +164,9 @@ local function on_hud_render() -- Handles the HUD layouts
     hud_set_value(HUD_DISPLAY_LIVES, displayLives)
     --hud_set_value(HUD_DISPLAY_COINS, displaycoin)
 
-    --if custom_hud == false then return end
+    if hud_07_layout then ax = 18 xb = 30 else ax = 16 xb = 28 end
+
+    if custom_hud == false then return end
 
     if obj_get_first_with_behavior_id(id_bhvActSelector) ~= nil then return end
     if gNetworkPlayers[0].currActNum == 99 then return end
@@ -198,52 +189,26 @@ local function on_hud_render() -- Handles the HUD layouts
         check_hud_value_on_launch = false
     end
 
-    if custom_hud then -- B-roll HUD layout
+    --if custom_hud then -- B-roll HUD layout
         hud_hide()
 
-        --Lives
-        --if (hud_get_value(HUD_DISPLAY_FLAGS) & HUD_DISPLAY_FLAG_LIVES) ~= 0 then
-        if ogLivesValue ~= 0 then
-            if _G.charSelectExists then
-                _G.charSelect.character_render_life_icon(0, 28, 14, 1)
-            else
-                djui_hud_render_texture(life_icons[gMarioStates[0].character.type], 28, 14, 1, 1)
-            end
-            djui_hud_print_text("@", 28 + 16, 14, 1)
-            djui_hud_print_text(lives, 28 + 28, 14, 1)
-        end
-
-        --Coins
-        djui_hud_render_texture(gTextures.coin, halfScreenWidth + 11, 31, 1, 1)
-        djui_hud_print_text("@", halfScreenWidth + 11 + 16, 31, 1)
-        djui_hud_print_text(coins, halfScreenWidth + 11 + 28, 31, 1)
-
-        --Stars
-        if _G.charSelectExists then
-            _G.charSelect.character_render_star_icon(0, halfScreenWidth + 11, 14, 1)
-        else
-            djui_hud_render_texture(gTextures.star, halfScreenWidth + 11, 14, 1, 1)
-        end
-        djui_hud_print_text("@", halfScreenWidth + 11 + 16, 14, 1)
-        djui_hud_print_text(stars, halfScreenWidth + 11 + 28, 14, 1)
+        render_lives_segment(28, 14, 1, 1)
+        render_stars_segment((halfScreenWidth + 11), 14, 1, 1)
+        render_coins_segment((halfScreenWidth + 11), 31, 1, 1)
 
         render_power_meter(halfScreenWidth - 51, 11, 1, 1)
         render_timer(hud_get_value(HUD_DISPLAY_TIMER), halfScreenWidth + 50, screenHeight - 40)
         --render_camera(screenWidth - 38, screenHeight - 35, 1)
 
-    else  -- temp fix for incorrect lives value with CS. Other HUD mods will still display incorrectly
+    --[[else  -- temp fix for incorrect lives value with CS. Other HUD mods will still display incorrectly
         if _G.charSelectExists then
-            local hudDisplayFlags = hud_get_value(HUD_DISPLAY_FLAGS)
-            hud_set_value(HUD_DISPLAY_FLAGS, hudDisplayFlags & ~HUD_DISPLAY_FLAGS_LIVES)
-            local x = 22
-            local y = 15 -- SCREEN_HEIGHT - 209 - 16
-            if _G.charSelectExists then
-                _G.charSelect.character_render_life_icon(0, x, y, 1)
-            else djui_hud_render_texture(life_icons[gMarioStates[0].character.type], x, y, 1, 1) end
-            djui_hud_print_text("@", x + 16, y, 1)
-            djui_hud_print_text(tostring(hud_get_value(HUD_DISPLAY_LIVES)):gsub("-", "M"), x + 32, y, 1)
+            local mask_width, mask_height = djui_hud_measure_text(tostring(displayLives))
+            djui_hud_set_color(0, 0, 0, 255)
+            djui_hud_render_rect(22 + 32, 15, mask_width + 4, mask_height)
+            djui_hud_set_color(255, 255, 255, 255)
+            djui_hud_print_text(tostring(displayLives):gsub("-", "M"), 22 + 32, 15, 1)
         end
-    end
+    end]]
 end
 
 hook_event(HOOK_ON_HUD_RENDER_BEHIND, on_hud_render)
@@ -251,6 +216,14 @@ hook_event(HOOK_ON_HUD_RENDER_BEHIND, on_hud_render)
 hook_chat_command("custom-hud", "Shows or hides the custom hud",
 function (msg)
     custom_hud = not custom_hud
+    play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
+    hud_show()
+    return true
+end)
+
+hook_chat_command("faithful-hud", "Toggles the b-roll HUD arrangement between the 0.7 and 1.0 layouts",
+function (msg)
+    hud_07_layout = not hud_07_layout
     play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
     hud_show()
     return true
