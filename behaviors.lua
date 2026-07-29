@@ -35,7 +35,7 @@ function wind_loop(o)
     ---@type MarioState
     local m = gMarioStates[0]
     --obj_copy_pos(pos, o)
-    play_sound(SOUND_AIR_HOWLING_WIND, m.marioObj.header.gfx.cameraToObject)
+    if m.marioObj ~= nil then play_sound(SOUND_AIR_HOWLING_WIND, m.marioObj.header.gfx.cameraToObject) end
     -- o.oPosX = gMarioStates[0].pos.x
     -- o.oPosY = gMarioStates[0].pos.y
     -- o.oPosZ = gMarioStates[0].pos.z
@@ -145,6 +145,7 @@ function fakewarp_loop(o)
         is_warping = true
     end
     if is_warping then
+        obj_mark_for_deletion(gMarioStates[0].marioObj)
         if transition == 0 then
             play_transition(WARP_TRANSITION_FADE_INTO_STAR, 15, 0, 0, 0)
             play_sound(SOUND_MENU_ENTER_HOLE, m.pos)
@@ -152,7 +153,7 @@ function fakewarp_loop(o)
         end
         warp_delay = warp_delay + 1
         if warp_delay >= 20 then
-            warp_to_level(dest_level, dest_area, gNetworkPlayers[0].currActNum)
+            warp_to_warpnode(dest_level, dest_area, gNetworkPlayers[0].currActNum, dest_node)
             set_mario_action(m, ACT_SPAWN_SPIN_AIRBORNE, 0)
             warp_delay = 0
             is_warping = false

@@ -162,16 +162,7 @@ function render_camera(x, y, scaleW, scaleH)
     end
 end
 
-local check_hud_value_on_launch = true
 local function on_hud_render() -- Handles the HUD layouts 
-
-    hud_set_value(HUD_DISPLAY_LIVES, displayLives)
-    --hud_set_value(HUD_DISPLAY_COINS, displaycoin)
-
-    if hud_07_layout then ax = 18 xb = 30 else ax = 16 xb = 28 end
-
-    if obj_get_first_with_behavior_id(id_bhvActSelector) ~= nil then return end
-    if gNetworkPlayers[0].currActNum == 99 then return end
     djui_hud_set_resolution(RESOLUTION_N64)
     djui_hud_set_color(255, 255, 255, 255)
     screenWidth = djui_hud_get_screen_width()
@@ -180,16 +171,17 @@ local function on_hud_render() -- Handles the HUD layouts
     halfScreenHeight = djui_hud_get_screen_height() / 2
     djui_hud_set_font(FONT_HUD)
 
+    hud_set_value(HUD_DISPLAY_LIVES, displayLives)
+    --hud_set_value(HUD_DISPLAY_COINS, displaycoin)
+
     lives = tostring(string.format("%02d", hud_get_value(HUD_DISPLAY_LIVES))):gsub("-", "M")
     coins = tostring(string.format("%02d", hud_get_value(HUD_DISPLAY_COINS))):gsub("-", "M")
     stars = tostring(string.format("%02d", hud_get_value(HUD_DISPLAY_STARS))):gsub("-", "M")
 
-    if check_hud_value_on_launch then 
-        if (hud_get_value(HUD_DISPLAY_FLAGS) & HUD_DISPLAY_FLAG_LIVES) ~= 0 then
-            ogLivesValue = 1
-        else ogLivesValue = 0 end
-        check_hud_value_on_launch = false
-    end
+    if obj_get_first_with_behavior_id(id_bhvActSelector) ~= nil then hud_hide() return end
+    if gNetworkPlayers[0].currActNum == 99 then hud_hide() return end
+
+    if hud_07_layout then ax = 18 xb = 30 else ax = 16 xb = 28 end
 
     if custom_hud then -- B-roll HUD layout
         hud_hide()

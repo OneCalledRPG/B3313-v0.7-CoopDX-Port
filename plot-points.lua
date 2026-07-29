@@ -539,22 +539,21 @@ hook_event(HOOK_ON_WARP, function()
         spawn_non_sync_object(id_bhvPushableMetalBox, E_MODEL_NONE, -2024, 205, 2050, nil)
     end
 
-    -- Better Coin Compatibility for Peach's Cell
-    --[[if gNetworkPlayers[0].currLevelNum == LEVEL_THI and gNetworkPlayers[0].currAreaIndex == 7 and betterCoinCompat then
-        --local starPOS = obj_get_first_with_behavior_id(id_bhvStar)
-        spawn_non_sync_object(bhvFakeWarp, E_MODEL_NONE, 2309,300,-22683, function(o) dest_level = LEVEL_SA dest_area = 6 end)
-    end]]
+    -- Better Coin Compatibility for Peach's Cell Warp
+    if gNetworkPlayers[0].currLevelNum == LEVEL_THI and gNetworkPlayers[0].currAreaIndex == 7 and betterCoinCompat then
+        spawn_non_sync_object(bhvFakeWarp, E_MODEL_STAR_TRANSPARENT, 2309,300,-22683, function(o) dest_level = LEVEL_SA dest_area = 6 dest_node = 11 end)
+    end
+
+    --spawn temp warps
+    if gNetworkPlayers[0].currLevelNum == LEVEL_CASTLE_GROUNDS and gNetworkPlayers[0].currAreaIndex == 1 then -- Ending Grounds (to 2nd Floor Beta)
+        spawn_non_sync_object(bhvFakeWarp, E_MODEL_NONE, 12, 550, -6005, function(o) dest_level = LEVEL_VCUTM dest_area = 4 dest_node = 10 end)
+    end
+    if gNetworkPlayers[0].currLevelNum == LEVEL_CASTLE and gNetworkPlayers[0].currAreaIndex == 1 then -- Inside vanilla lobby (to long Crimson Courtyard)
+        spawn_non_sync_object(bhvFakeWarp, E_MODEL_NONE, 1990, 819, 1236, function(o) dest_level = LEVEL_BITDW dest_area = 2 dest_node = 10 end)
+    end
 end)
 
 hook_event(HOOK_ON_LEVEL_INIT, function()
-    --spawn temp warps
-    if gNetworkPlayers[0].currLevelNum == LEVEL_CASTLE_GROUNDS and gNetworkPlayers[0].currAreaIndex == 1 then -- Ending Grounds (to 2nd Floor Beta)
-        spawn_non_sync_object(bhvFakeWarp, E_MODEL_NONE, 12, 550, -6005, function(o) dest_level = LEVEL_VCUTM dest_area = 4 end)
-    end
-    if gNetworkPlayers[0].currLevelNum == LEVEL_CASTLE and gNetworkPlayers[0].currAreaIndex == 1 then -- Inside vanilla lobby (to long Crimson Courtyard)
-        spawn_non_sync_object(bhvFakeWarp, E_MODEL_NONE, 1990, 819, 1236, function(o) dest_level = LEVEL_BITDW dest_area = 2 end)
-    end
-
     -- Peach NPC
     if gNetworkPlayers[0].currLevelNum == LEVEL_DDD and gNetworkPlayers[0].currAreaIndex == 4 and gNetworkPlayers[0].currActNum == 99 then 
         spawn_non_sync_object(bhvB3313Peach, E_MODEL_PEACH, 2350, 0, -1600, function(o) o.oFaceAngleYaw = -6000 end)

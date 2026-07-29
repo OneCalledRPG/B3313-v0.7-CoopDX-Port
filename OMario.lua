@@ -521,7 +521,7 @@ function act_custom_hang_moving(m)
 	return 0
 end
 
-ACT_SPAWN_SPIN_AIRBORNE_BETA = allocate_mario_action(ACT_GROUP_AIRBORNE | ACT_FLAG_AIR | ACT_FLAG_ATTACKING)
+--ACT_SPAWN_SPIN_AIRBORNE_BETA = allocate_mario_action(ACT_GROUP_AIRBORNE | ACT_FLAG_AIR | ACT_FLAG_ATTACKING)
 function act_spawn_spin_airborne_beta(m)
     m.peakHeight = m.pos.y
     if m.pos.y < m.waterLevel - 100 then
@@ -649,9 +649,9 @@ function mario_on_set_action(m)
 		if m.action == ACT_AIR_HIT_WALL then
             set_mario_animation(m, MARIO_ANIM_START_WALLKICK)
         end
-		if m.action == ACT_SPAWN_SPIN_AIRBORNE then
+		--[[if m.action == ACT_SPAWN_SPIN_AIRBORNE then
 			set_mario_action(m, ACT_SPAWN_SPIN_AIRBORNE_BETA, 0)
-		end
+		end]]
 		-- Squatkick
 		if enableBeeie09 then
 			if m.action == ACT_SLIDE_KICK then
@@ -779,8 +779,7 @@ hook_event(HOOK_BEFORE_PHYS_STEP, beta_mario_before_phys_step)
 hook_mario_action(ACT_GROUND_POUND_B3313, act_ground_pound_b3313, INT_GROUND_POUND_OR_TWIRL)
 hook_mario_action(ACT_SQUAT_KICK_B3313, act_squatkick_b3313, INT_SLIDE_KICK)
 hook_event(HOOK_ALLOW_INTERACT, boo_bounce)
---hook_mario_action(ACT_SPAWN_SPIN_AIRBORNE, act_spawn_spin_airborne, INT_ANY_ATTACK)
-hook_mario_action(ACT_SPAWN_SPIN_AIRBORNE_BETA, act_spawn_spin_airborne_beta, INT_ANY_ATTACK)
+hook_mario_action(ACT_SPAWN_SPIN_AIRBORNE, act_spawn_spin_airborne_beta, INT_ANY_ATTACK)
 hook_mario_action(ACT_HANG_MOVING, act_custom_hang_moving)
 hook_event(HOOK_ON_SET_MARIO_ACTION, mario_on_set_action)
 hook_event(HOOK_ON_PAUSE_EXIT, on_pause_exit)
@@ -789,31 +788,31 @@ hook_event(HOOK_MARIO_UPDATE, mario_update)
 function beeieMarioAesthetics_command(msg)
     gPlayerSyncTable[0].vanillaMario = not gPlayerSyncTable[0].vanillaMario
 	play_character_sound(gMarioStates[0], CHAR_SOUND_HOOHOO)
-	play_sound(SOUND_MENU_STAR_SOUND, gMarioStates[0].pos)
+	play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
     return true
 end
 
 function beeieMoveset_command(msg)
 	gPlayerSyncTable[0].B3313_Moveset = not gPlayerSyncTable[0].B3313_Moveset
-	play_sound(SOUND_MENU_STAR_SOUND, gMarioStates[0].pos)
+	play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
     return true
 end
 
 function beeieQOL_command(msg)
 	enableBeeie09 = not enableBeeie09
-	play_sound(SOUND_MENU_STAR_SOUND, gMarioStates[0].pos)
+	play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
     return true
 end
 
 function beeieChungus_command(msg)
     chungus = not chungus
-	play_sound(SOUND_MENU_STAR_SOUND, gMarioStates[0].pos)
+	play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
     return true
 end
 
 function bLuigiSlidePatch_command(msg)
 	bluigiSlideFix = not bluigiSlideFix
-	play_sound(SOUND_MENU_STAR_SOUND, gMarioStates[0].pos)
+	play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
     return true
 end
 

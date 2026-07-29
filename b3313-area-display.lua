@@ -502,7 +502,7 @@ end
 
 local function blist_command(msg)
     extendedAreaList = not extendedAreaList
-    play_sound(SOUND_MENU_STAR_SOUND, gMarioStates[0].pos)
+    play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
     return true
 end
 
