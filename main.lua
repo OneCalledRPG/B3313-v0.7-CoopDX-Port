@@ -1,5 +1,5 @@
 -- name:[v0.7] \\#F78AF5\\B\\#F94A36\\3\\#4C5BFF\\3\\#EDD83D\\1\\#16C31C\\3
--- description: \\#F78AF5\\B\\#F94A36\\3\\#4C5BFF\\3\\#EDD83D\\1\\#16C31C\\3\\#dcdcdc\\ v0.7 Coop\n\nMario and his friends are back, and a whole new world has opened up to them.\nWill you play the game, or will it play you? \n\nOriginal romack by ChrisRLilo\n\n- Ported by TikalSM64 & Blocky.cmd \n- New models by FluffaMario \n- Moddable hud by Sunk\n- Moveset by ER1CK & wingstosky256 \n- Fast Travel, Area Display and Star Display implemented by Floralys \n- Custom SFX System by Cooliokid956\n- Behaviors recreated by watchr\n- Additional help and fixes by MrNeedleMouse.z64, Fearl, Asra, & Ale64\n- General port cleanup and new texture work by OneCalledRPG \n\nEnjoy
+-- description: \\#F78AF5\\B\\#F94A36\\3\\#4C5BFF\\3\\#EDD83D\\1\\#16C31C\\3\\#dcdcdc\\ v0.7 Coop\nWill you play the game, or will it play you?\n\n Original hack by Chris R Lillo and B3313's contributers\n Ported by TikalSM64, blocky.cmd, and the B3313 Coop Port Team
 -- incompatible: romhack
 
 gLevelValues.fixCollisionBugs = true
