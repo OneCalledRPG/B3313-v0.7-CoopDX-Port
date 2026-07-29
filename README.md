@@ -4,6 +4,14 @@
 ## About:
 A port of B3313 (v0.7) to CoopDX, giving the hack multiplayer support and compatibility with other various mods. Includes quality of life stuff like a star tracker, extra movement options, and various tweaks for added customization.
 
+## Chat commands (for HUD):
+The commands for the HUD are as follows:
+- `custom-hud`: Toggles between the beta HUD and vanilla HUD
+- `faithful-hud`: Toggles the layout from an accurate B-roll to the initial b3313 v0.7 HUD (textures not included)
+- `pm-override`: Renders the vanilla power meter in the beta HUD. Useful for CS packs that alter the power meters in significant ways, such as EC Sonic
+- `reset-hud`: Resets the HUD to it's original boot state (accurate B-roll HUD enabled with the original beta power meter)
+Every other togglable setting can be found in the mod menu, found in-game in the Coop menu itself.
+
 ## Credits:
 - Original ROMhack by ChrisRLilo and B3313's contributers
 - Ported by TikalSM64 & Blocky.cmd
