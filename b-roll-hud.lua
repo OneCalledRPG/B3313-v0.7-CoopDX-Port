@@ -1,5 +1,6 @@
 custom_hud = true
 hud_07_layout = false
+power_meter_override = false
 
 local life_icons = {
     [CT_MARIO] = gTextures.mario_head,
@@ -33,6 +34,8 @@ function render_lives_segment(x, y, scaleW, scaleH) -- Lives
         _G.charSelect.character_render_life_icon(0, x, y, scaleW)
     else
         djui_hud_render_texture(gMarioStates[0].character.hudHeadTexture, x, y, scaleW, scaleH)
+        --lifeIcon = gMarioStates[0].character.hudHeadTexture
+        --djui_hud_render_texture(lifeIcon, x, y, scaleW / (lifeIcon.width * MATH_DIVIDE_16), scaleH / (lifeIcon.height * MATH_DIVIDE_16))
     end
     djui_hud_print_text("@", x + ax, y, scaleW)
     djui_hud_print_text(lives, x + xb, y, scaleW)
@@ -95,16 +98,17 @@ function render_power_meter(x, y, scaleW, scaleH)
     djui_hud_set_color(255, 255, 255, 255)
     hud_render_power_meter(gMarioStates[0].health, x, y + ascendValue, scaleW, scaleH)]]
 
+    if not power_meter_override then
     --if not gPlayerSyncTable[0].vanillaMario then
         djui_hud_render_texture(powerMeters["left"], x, y + ascendValue, scaleW, scaleH)
         djui_hud_render_texture(powerMeters["right"], x + 32, y + ascendValue, scaleW, scaleH)
         if health > 0 then
             djui_hud_render_texture(powerMeters[health], (x + 16), (y + 16) + ascendValue, scaleW, scaleH)
         end
-    --else
-    --    djui_hud_set_color(255, 255, 255, 255)
-    --    hud_render_power_meter(gMarioStates[0].health, x, y + ascendValue, scaleW, scaleH)
-    --end
+    else
+        djui_hud_set_color(255, 255, 255, 255)
+        hud_render_power_meter(gMarioStates[0].health, halfScreenWidth - 51, 9 + ascendValue, 65, 65)
+    end
 end
 
 minutes = 0
@@ -166,8 +170,6 @@ local function on_hud_render() -- Handles the HUD layouts
 
     if hud_07_layout then ax = 18 xb = 30 else ax = 16 xb = 28 end
 
-    if custom_hud == false then return end
-
     if obj_get_first_with_behavior_id(id_bhvActSelector) ~= nil then return end
     if gNetworkPlayers[0].currActNum == 99 then return end
     djui_hud_set_resolution(RESOLUTION_N64)
@@ -189,7 +191,7 @@ local function on_hud_render() -- Handles the HUD layouts
         check_hud_value_on_launch = false
     end
 
-    --if custom_hud then -- B-roll HUD layout
+    if custom_hud then -- B-roll HUD layout
         hud_hide()
 
         render_lives_segment(28, 14, 1, 1)
@@ -199,16 +201,7 @@ local function on_hud_render() -- Handles the HUD layouts
         render_power_meter(halfScreenWidth - 51, 11, 1, 1)
         render_timer(hud_get_value(HUD_DISPLAY_TIMER), halfScreenWidth + 50, screenHeight - 40)
         --render_camera(screenWidth - 38, screenHeight - 35, 1)
-
-    --[[else  -- temp fix for incorrect lives value with CS. Other HUD mods will still display incorrectly
-        if _G.charSelectExists then
-            local mask_width, mask_height = djui_hud_measure_text(tostring(displayLives))
-            djui_hud_set_color(0, 0, 0, 255)
-            djui_hud_render_rect(22 + 32, 15, mask_width + 4, mask_height)
-            djui_hud_set_color(255, 255, 255, 255)
-            djui_hud_print_text(tostring(displayLives):gsub("-", "M"), 22 + 32, 15, 1)
-        end
-    end]]
+    end
 end
 
 hook_event(HOOK_ON_HUD_RENDER_BEHIND, on_hud_render)
@@ -223,7 +216,26 @@ end)
 
 hook_chat_command("faithful-hud", "Toggles the b-roll HUD arrangement between the 0.7 and 1.0 layouts",
 function (msg)
+    if not custom_hud then custom_hud = true end
     hud_07_layout = not hud_07_layout
+    play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
+    hud_show()
+    return true
+end)
+
+hook_chat_command("pm-override", "Forces the HUD to render the default, non-beta power meter (useful for CS packs with interesting/custom power meters)",
+function (msg)
+    power_meter_override = not power_meter_override
+    play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
+    hud_show()
+    return true
+end)
+
+hook_chat_command("reset-hud", "Forces the HUD back to default B3313 HUD settings)",
+function (msg)
+    power_meter_override = false
+    custom_hud = true
+    hud_07_layout = false
     play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
     hud_show()
     return true

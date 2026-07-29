@@ -51,6 +51,7 @@ function hide_peach_dialog()
 end
 hook_event(HOOK_ON_HUD_RENDER, hide_peach_dialog)
 
+
 ---@param m MarioState
 hook_event(HOOK_MARIO_UPDATE, function(m)
     if m.playerIndex ~= 0 then return end
@@ -534,8 +535,8 @@ hook_event(HOOK_ON_WARP, function()
 
     --Fix Crescent Castle Death Floor
     if gNetworkPlayers[0].currLevelNum == LEVEL_BOB and gNetworkPlayers[0].currAreaIndex == 6 then
-        spawn_non_sync_object(id_bhvPushableMetalBox, E_MODEL_METAL_BOX, -2331, 205, 2050, nil)
-        spawn_non_sync_object(id_bhvPushableMetalBox, E_MODEL_METAL_BOX, -2024, 205, 2050, nil)
+        spawn_non_sync_object(id_bhvPushableMetalBox, E_MODEL_NONE, -2331, 205, 2050, nil)
+        spawn_non_sync_object(id_bhvPushableMetalBox, E_MODEL_NONE, -2024, 205, 2050, nil)
     end
 
     -- Better Coin Compatibility for Peach's Cell

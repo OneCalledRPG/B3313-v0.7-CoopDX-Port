@@ -257,29 +257,6 @@ hook_event(HOOK_ON_SYNC_VALID, on_sync_valid)
 
 playB3313SFX = true
 
-local function stop_all_custom_character_sounds()
-    for i = 0, MAX_PLAYERS - 1 do
-        local m = gMarioStates[i]
-        local voiceTable = charSelect.character_get_voice(m)
-        if voiceTable ~= nil then
-            for sound in pairs(voiceTable) do
-                if voiceTable[sound] ~= nil and type(voiceTable[sound]) ~= "string" then
-                    if voiceTable[sound]._pointer == nil then
-                        for voice in pairs(voiceTable[sound]) do
-                            if type(voiceTable[sound][voice]) == "string" then
-                                break
-                            end
-                            audio_sample_stop(voiceTable[sound][voice])
-                        end
-                    else
-                        audio_sample_stop(voiceTable[sound])
-                    end
-                end
-            end
-        end
-    end
-end
-
 -- Mutes sound effects upon a certain dialog cue from Toad
 hook_event(HOOK_ON_DIALOG, function (dialogID)
     if dialogID == 19 and areas[gNetworkPlayers[gMarioStates[0].playerIndex].currLevelNum] ~= nil then
@@ -527,45 +504,29 @@ hook_event(HOOK_MARIO_UPDATE, function(m) -- ALL Mario_Update hooked commands.,
     custom_character_snore(m)
 
     door_pos_update(m)
-    if not playB3313SFX then stop_custom_character_sound(m, sound)
-        if _G.charSelectExists then stop_all_custom_character_sounds() end 
-    end
+    if not playB3313SFX then stop_custom_character_sound(m, sound) end
 
     if m.playerIndex ~= 0 then return end
     -- Footstep sounds
     if (m.terrainSoundAddend == 196608 or m.terrainSoundAddend == 131072) and (m.flags ~= m.flags | MARIO_METAL_CAP) then
-        --[[if m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_WALKING 
-        or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_RUNNING 
-        or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_RUNNING_UNUSED
-        or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_RUN_WITH_LIGHT_OBJ
-        or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_WALK_WITH_LIGHT_OBJ then]]
-            if step_sound then
-                --if is_anim_past_frame(m, 26) ~= 0 or is_anim_past_frame(m, 60) ~= 0 then
-                    if m.terrainSoundAddend == 196608 then
-                        network_play(sStepDefault, m.pos, 1.5, m.playerIndex)
-                    elseif m.terrainSoundAddend == 131072 then
-                        network_play(sStepWater, m.pos, 1.5, m.playerIndex)
-                    end
-                    step_sound = false
-                --end
+
+        --Step handling
+        if step_sound then
+            if m.terrainSoundAddend == 196608 then
+                network_play(sStepDefault, m.pos, 1.5, m.playerIndex)
+            elseif m.terrainSoundAddend == 131072 then
+                network_play(sStepWater, m.pos, 1.5, m.playerIndex)
             end
-        --end
-        --[[if m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_TIPTOE 
-        or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_WALK_WITH_HEAVY_OBJ
-        or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_RUN_WITH_HEAVY_OBJ  
-        or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_SLOW_WALK_WITH_HEAVY_OBJ
-        or m.marioObj.header.gfx.animInfo.animID == CHAR_ANIM_SLOW_WALK_WITH_LIGHT_OBJ then]]
-            if step_sound then
-                --if is_anim_past_frame(m, 26) ~= 0 or is_anim_past_frame(m, 80) ~= 0 then
-                    if m.terrainSoundAddend == 196608 then
-                        network_play(sStepDefault, m.pos, 1.5, m.playerIndex)
-                    elseif m.terrainSoundAddend == 131072 then
-                        network_play(sStepWater, m.pos, 1.5, m.playerIndex)
-                    end
-                --end
-                step_sound = false
+            step_sound = false
+        end
+        if step_sound then
+            if m.terrainSoundAddend == 196608 then
+                network_play(sStepDefault, m.pos, 1.5, m.playerIndex)
+            elseif m.terrainSoundAddend == 131072 then
+                network_play(sStepWater, m.pos, 1.5, m.playerIndex)
             end
-        --end
+            step_sound = false
+        end
 
         --Jump handling
         if m.pos.y > m.floorHeight then

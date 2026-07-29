@@ -521,25 +521,29 @@ function act_custom_hang_moving(m)
 	return 0
 end
 
-function act_spawn_spin_airborne(m)
-	m.peakHeight = m.pos.y
+ACT_SPAWN_SPIN_AIRBORNE_BETA = allocate_mario_action(ACT_GROUP_AIRBORNE | ACT_FLAG_AIR | ACT_FLAG_ATTACKING)
+function act_spawn_spin_airborne_beta(m)
+    m.peakHeight = m.pos.y
     if m.pos.y < m.waterLevel - 100 then
         return set_water_plunge_action(m)
     end
+
     m.forwardVel = 2
     m.freeze = 1
+
     update_air_without_turn(m)
     set_mario_animation(m, MARIO_ANIM_FORWARD_SPINNING)
+
     local airStepResult = perform_air_step(m, 0)
     if airStepResult == AIR_STEP_LANDED then
-		m.actionState = m.actionState + 1
+        m.actionState = m.actionState + 1
         if m.actionState == 1 then
             m.vel.y = 47.0
         end
-	end
-	if m.actionState == 2 then
-		m.action = ACT_SPAWN_SPIN_LANDING
-	end
+    end
+    if m.actionState == 2 then
+        m.action = ACT_SPAWN_SPIN_LANDING
+    end
     m.particleFlags = m.particleFlags | PARTICLE_SPARKLES
     return false
 end
@@ -560,9 +564,12 @@ local function beta_mario_before_phys_step(m)
     or m.floor.type == SURFACE_SLIPPERY
     or m.floor.type == SURFACE_VERY_SLIPPERY
     or m.floor.type == SURFACE_ICE
-    or m.area.terrainType == 6)	
+    or m.area.terrainType == 6)
+
 
 	local hScale = 1.0
+	local vScale = 1.0
+	
     -- friction
 	if gPlayerSyncTable[0].B3313_Moveset then
     	if not slipperyFloors then
@@ -600,6 +607,7 @@ local function beta_mario_before_phys_step(m)
     	end
 	end
 end
+
 
 function mario_on_set_action(m)
 	if (m.playerIndex ~= 0) then return end
@@ -641,6 +649,9 @@ function mario_on_set_action(m)
 		if m.action == ACT_AIR_HIT_WALL then
             set_mario_animation(m, MARIO_ANIM_START_WALLKICK)
         end
+		if m.action == ACT_SPAWN_SPIN_AIRBORNE then
+			set_mario_action(m, ACT_SPAWN_SPIN_AIRBORNE_BETA, 0)
+		end
 		-- Squatkick
 		if enableBeeie09 then
 			if m.action == ACT_SLIDE_KICK then
@@ -662,7 +673,6 @@ function mario_update(m)
 	betaShadingAndTilt(m)
 	--if (m.playerIndex ~= 0) then return end
 	if gPlayerSyncTable[0].B3313_Moveset then
-		--beta_mario_before_phys_step(m)
 		if m.action == ACT_BUTT_SLIDE or m.action == ACT_BUTT_SLIDE_AIR then
 			set_mario_animation(m, MARIO_ANIM_SLIDE_MOTIONLESS)
 		end
@@ -711,6 +721,7 @@ function mario_update(m)
 				end
 			end
 		end
+
 		--fly from cannon
 		-- Visually keep Mario's cap the same during the fake wing cap state
 		if gPlayerSyncTable[m.playerIndex].switch_cap_state then
@@ -768,7 +779,8 @@ hook_event(HOOK_BEFORE_PHYS_STEP, beta_mario_before_phys_step)
 hook_mario_action(ACT_GROUND_POUND_B3313, act_ground_pound_b3313, INT_GROUND_POUND_OR_TWIRL)
 hook_mario_action(ACT_SQUAT_KICK_B3313, act_squatkick_b3313, INT_SLIDE_KICK)
 hook_event(HOOK_ALLOW_INTERACT, boo_bounce)
-hook_mario_action(ACT_SPAWN_SPIN_AIRBORNE, act_spawn_spin_airborne, INT_ANY_ATTACK)
+--hook_mario_action(ACT_SPAWN_SPIN_AIRBORNE, act_spawn_spin_airborne, INT_ANY_ATTACK)
+hook_mario_action(ACT_SPAWN_SPIN_AIRBORNE_BETA, act_spawn_spin_airborne_beta, INT_ANY_ATTACK)
 hook_mario_action(ACT_HANG_MOVING, act_custom_hang_moving)
 hook_event(HOOK_ON_SET_MARIO_ACTION, mario_on_set_action)
 hook_event(HOOK_ON_PAUSE_EXIT, on_pause_exit)
