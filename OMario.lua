@@ -337,39 +337,37 @@ end
 ACT_GROUND_POUND_B3313 = allocate_mario_action(ACT_GROUP_AIRBORNE | ACT_FLAG_AIR | ACT_FLAG_ATTACKING)
 function act_ground_pound_b3313(m)
     local e = gStateExtras[m.playerIndex]
-	    if m.actionTimer == 0 then
-		    m.vel.y = -45
-		    e.animFrame = 2
-		    play_sound(SOUND_ACTION_SPIN, m.marioObj.header.gfx.cameraToObject)
-		    play_character_sound(m, CHAR_SOUND_GROUND_POUND_WAH)
-	    end
-	    mario_set_forward_vel(m, 0)
-	    m.vel.y = m.vel.y + 1.75
-
-	    local stepResult = perform_air_step(m, 0)
-	    if stepResult == AIR_STEP_LANDED then
-		    if should_get_stuck_in_ground(m) ~= 0 then
-			    queue_rumble_data_mario(m, 5, 80)
-			    play_sound(SOUND_MARIO_OOOF2, m.marioObj.header.gfx.cameraToObject)
-			    m.particleFlags = m.particleFlags | PARTICLE_MIST_CIRCLE
-			    set_mario_action(m, ACT_BUTT_STUCK_IN_GROUND, 0)
-		    else
-			    play_mario_heavy_landing_sound(m, SOUND_ACTION_TERRAIN_HEAVY_LANDING)
-			    if check_fall_damage(m, ACT_HARD_BACKWARD_GROUND_KB) == 0 then
-				    m.particleFlags = m.particleFlags | PARTICLE_MIST_CIRCLE | PARTICLE_HORIZONTAL_STAR
-				    set_mario_action(m, ACT_GROUND_POUND_LAND, 0)
-			    end
+	if m.actionTimer <= 1 then
+		e.animFrame = 2
+	    m.vel.y = -45
+	    play_sound(SOUND_ACTION_SPIN, m.marioObj.header.gfx.cameraToObject)
+	    play_character_sound(m, CHAR_SOUND_GROUND_POUND_WAH)
+	end
+	mario_set_forward_vel(m, 0)
+	m.vel.y = m.vel.y + 1.75
+	local stepResult = perform_air_step(m, 0)
+	if stepResult == AIR_STEP_LANDED then
+	    if should_get_stuck_in_ground(m) ~= 0 then
+		    queue_rumble_data_mario(m, 5, 80)
+		    play_sound(SOUND_MARIO_OOOF2, m.marioObj.header.gfx.cameraToObject)
+		    m.particleFlags = m.particleFlags | PARTICLE_MIST_CIRCLE
+		    set_mario_action(m, ACT_BUTT_STUCK_IN_GROUND, 0)
+	    else
+		    play_mario_heavy_landing_sound(m, SOUND_ACTION_TERRAIN_HEAVY_LANDING)
+		    if check_fall_damage(m, ACT_HARD_BACKWARD_GROUND_KB) == 0 then
+			    m.particleFlags = m.particleFlags | PARTICLE_MIST_CIRCLE | PARTICLE_HORIZONTAL_STAR
+			    set_mario_action(m, ACT_GROUND_POUND_LAND, 0)
 		    end
 	    end
-
-	    set_mario_animation(m, MARIO_ANIM_START_GROUND_POUND)
-	    set_anim_to_frame(m, e.animFrame)
-	    if e.animFrame >= m.marioObj.header.gfx.animInfo.curAnim.loopEnd then
-		    e.animFrame = m.marioObj.header.gfx.animInfo.curAnim.loopEnd
-	    end
-	    e.animFrame = e.animFrame + 1
-	    m.actionTimer = m.actionTimer + 1
-	    return
+	end
+	set_mario_animation(m, MARIO_ANIM_START_GROUND_POUND)
+	set_anim_to_frame(m, e.animFrame)
+	if e.animFrame >= m.marioObj.header.gfx.animInfo.curAnim.loopEnd then
+	    e.animFrame = m.marioObj.header.gfx.animInfo.curAnim.loopEnd
+	end
+	e.animFrame = e.animFrame + 1
+	m.actionTimer = m.actionTimer + 1
+	return
 end
 
 ACT_SQUAT_KICK_B3313 = allocate_mario_action(ACT_GROUP_AIRBORNE | ACT_FLAG_AIR | ACT_FLAG_ALLOW_VERTICAL_WIND_ACTION | ACT_FLAG_SHORT_HITBOX | ACT_FLAG_ATTACKING)
@@ -597,12 +595,16 @@ local function beta_mario_before_phys_step(m)
 					m.forwardVel = m.forwardVel + (hScale * 0.5)
 				end
 			end
-			if (m.controller.stickY >  0) then
+			--[[if (m.controller.stickY >  0) then
 				m.slideVelX = (m.slideVelX * 1.03) + (sins(m.faceAngle.y) * 0.005)
 				m.slideVelZ = (m.slideVelZ * 1.03) + (coss(m.faceAngle.y) * 0.005)
 			else
 				m.slideVelX = m.slideVelX + (sins(m.faceAngle.y) * 0.01)
 				m.slideVelZ = m.slideVelZ + (coss(m.faceAngle.y) * 0.01)
+			end]]
+			if m.action == ACT_BUTT_SLIDE or m.action == ACT_HOLD_BUTT_SLIDE or m.action == ACT_STOMACH_SLIDE or m.action == ACT_HOLD_STOMACH_SLIDE or m.action == ACT_DIVE_SLIDE or m.action == ACT_SLIDE_KICK_SLIDE then
+				m.slideVelX = m.slideVelX * 1.03 + (sins(m.faceAngle.y) * 0.01)
+				m.slideVelZ = m.slideVelZ * 1.03 + (coss(m.faceAngle.y) * 0.01)
 			end
     	end
 	end
@@ -671,7 +673,7 @@ extendedFly = false
 function mario_update(m)
     local e = gStateExtras[m.playerIndex]
 	betaShadingAndTilt(m)
-	--if (m.playerIndex ~= 0) then return end
+	if (m.playerIndex ~= 0) then return end
 	if gPlayerSyncTable[0].B3313_Moveset then
 		if m.action == ACT_BUTT_SLIDE or m.action == ACT_BUTT_SLIDE_AIR then
 			set_mario_animation(m, MARIO_ANIM_SLIDE_MOTIONLESS)

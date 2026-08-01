@@ -19,6 +19,7 @@ local function on_interact(m, o, type)
             check = 0
             if (gNetworkPlayers[0].currLevelNum == LEVEL_THI and gNetworkPlayers[0].currAreaIndex == 7) then
                 spawn_sync_object(id_bhvStar, E_MODEL_STAR_TRANSPARENT, o.oPosX, o.oPosY, o.oPosZ, function(o) o.oBehParams = oBeh end)
+                spawn_non_sync_object(bhvFakeWarp, E_MODEL_STAR_TRANSPARENT, 2309,300,-22683, function(o) dest_level = LEVEL_SA dest_area = 6 dest_node = 11 end)
             end
         end
     end

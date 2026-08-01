@@ -26,13 +26,13 @@ yellowSwitchCapState = 0
 capBuffer = false
 betterCoinCompat = false
 
-hook_event(HOOK_ON_MODS_LOADED, function()
+--[[hook_event(HOOK_ON_MODS_LOADED, function()
     for i = 0, #gActiveMods, 1 do
 	    if gActiveMods[i].name:find("Better Coins") then
 		    betterCoinCompat = true
 	    end
     end
-end)
+end)]]
 
 -- Hide Peach's dialogue text during the credits
 function hide_peach_dialog()
@@ -537,11 +537,6 @@ hook_event(HOOK_ON_WARP, function()
     if gNetworkPlayers[0].currLevelNum == LEVEL_BOB and gNetworkPlayers[0].currAreaIndex == 6 then
         spawn_non_sync_object(id_bhvPushableMetalBox, E_MODEL_NONE, -2331, 205, 2050, nil)
         spawn_non_sync_object(id_bhvPushableMetalBox, E_MODEL_NONE, -2024, 205, 2050, nil)
-    end
-
-    -- Better Coin Compatibility for Peach's Cell Warp
-    if gNetworkPlayers[0].currLevelNum == LEVEL_THI and gNetworkPlayers[0].currAreaIndex == 7 and betterCoinCompat then
-        spawn_non_sync_object(bhvFakeWarp, E_MODEL_STAR_TRANSPARENT, 2309,300,-22683, function(o) dest_level = LEVEL_SA dest_area = 6 dest_node = 11 end)
     end
 
     --spawn temp warps

@@ -28,6 +28,9 @@ camera_romhack_allow_only_mods(1)
 
 --gLevelValues.respawnBlueCoinsSwitch = true
 
+-- Texture Override for things that don't work automatically
+texture_override_set("texture_transition_bowser_half", get_texture_info("beta_skull_transition"))
+
 gLevelValues.wingCapDurationTotwc = 1
 gLevelValues.metalCapDurationCotmc = 1
 gLevelValues.vanishCapDurationVcutm = 1

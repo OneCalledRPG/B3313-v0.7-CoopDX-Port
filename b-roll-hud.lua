@@ -109,6 +109,15 @@ function render_power_meter(x, y, scaleW, scaleH)
         djui_hud_set_color(255, 255, 255, 255)
         hud_render_power_meter(gMarioStates[0].health, halfScreenWidth - 51, 9 + ascendValue, 65, 65)
     end
+
+    if _G.charSelectExists then
+        char_power_meter = _G.charSelect.character_get_health_meter()
+        if type(char_power_meter) == "function" then
+            power_meter_override = true
+        else
+            power_meter_override = false
+        end
+    end
 end
 
 minutes = 0
@@ -215,17 +224,8 @@ function (msg)
     return true
 end)
 
-hook_chat_command("pm-override", "Forces the HUD to render the default, non-beta power meter (useful for CS packs with interesting/custom power meters)",
-function (msg)
-    power_meter_override = not power_meter_override
-    play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
-    hud_show()
-    return true
-end)
-
 hook_chat_command("reset-hud", "Forces the HUD back to default B3313 HUD settings)",
 function (msg)
-    power_meter_override = false
     custom_hud = true
     hud_07_layout = false
     play_sound(SOUND_MENU_CLICK_FILE_SELECT, gMarioStates[0].pos)
